@@ -63,7 +63,7 @@ export const TeamRecommendation: React.FC<TeamRecommendationProps> = ({ results 
                             </ScrollArea>
 
                             {/* Leftovers Warning */}
-                            {(result.leftovers.gold > 0.01 || result.leftovers.cocaine > 0.01 || result.leftovers.painting > 0 || result.leftovers.weed > 0.01 || result.leftovers.cash > 0.01) && (
+                            {(result.leftovers.gold > 0.01 || result.leftovers.cocaine > 0.01 || result.leftovers.painting > 0 || result.leftovers.weed > 0.01 || result.leftovers.cash_compound > 0.01 || result.leftovers.cash_airstrip > 0.01) && (
                                 <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/30 text-destructive flex items-start gap-3">
                                     <div className="text-xl">⚠️</div>
                                     <div className="text-sm">
@@ -73,12 +73,13 @@ export const TeamRecommendation: React.FC<TeamRecommendationProps> = ({ results 
                                             {result.leftovers.cocaine > 0.01 && <li>古柯鹼: {result.leftovers.cocaine.toFixed(2)} 堆</li>}
                                             {result.leftovers.painting > 0 && <li>畫作: {result.leftovers.painting} 幅</li>}
                                             {result.leftovers.weed > 0.01 && <li>大麻: {result.leftovers.weed.toFixed(2)} 堆</li>}
-                                            {result.leftovers.cash > 0.01 && <li>現金: {result.leftovers.cash.toFixed(2)} 堆</li>}
+                                            {result.leftovers.cash_compound > 0.01 && <li>現金(莊): {result.leftovers.cash_compound.toFixed(2)} 堆</li>}
+                                            {result.leftovers.cash_airstrip > 0.01 && <li>現金(機): {result.leftovers.cash_airstrip.toFixed(2)} 堆</li>}
                                         </ul>
                                     </div>
                                 </div>
                             )}
-                            {(result.leftovers.gold <= 0.01 && result.leftovers.cocaine <= 0.01 && result.leftovers.painting <= 0 && result.leftovers.weed <= 0.01 && result.leftovers.cash <= 0.01) && (
+                            {(result.leftovers.gold <= 0.01 && result.leftovers.cocaine <= 0.01 && result.leftovers.painting <= 0 && result.leftovers.weed <= 0.01 && result.leftovers.cash_compound <= 0.01 && result.leftovers.cash_airstrip <= 0.01) && (
                                 <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/30 text-green-600 dark:text-green-400 flex items-center gap-3">
                                     <div className="text-xl">✅</div>
                                     <div className="font-bold">完美搬空！所有財物皆已帶走。</div>
@@ -99,7 +100,9 @@ const PlayerCard: React.FC<{ player: PlayerLoot }> = ({ player }) => {
             case 'cocaine': return isText ? 'text-slate-600 dark:text-slate-300' : 'bg-slate-400';
             case 'painting': return isText ? 'text-rose-600 dark:text-rose-400' : 'bg-rose-500';
             case 'weed': return isText ? 'text-emerald-600 dark:text-emerald-400' : 'bg-emerald-500';
-            case 'cash': return isText ? 'text-lime-600 dark:text-lime-400' : 'bg-lime-500';
+            case 'cash_compound':
+            case 'cash_airstrip':
+                return isText ? 'text-lime-600 dark:text-lime-400' : 'bg-lime-500';
             default: return isText ? 'text-gray-600' : 'bg-gray-500';
         }
     };
