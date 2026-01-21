@@ -30,7 +30,9 @@ function App() {
               <p className="font-semibold mb-2">🎒 背包容量 (Capacity):</p>
               <ul className="space-y-1 pl-4 list-disc">
                 <li>🟡 黃金 (Gold): ~66.6% / 堆</li>
-                <li>🎨 畫作 (Painting): 50% / 幅 (不可分割)</li>
+                <li>⚪ 古柯鹼 (Cocaine): 50% / 堆</li>
+                <li>🎨 畫作 (Painting): 50% / 幅</li>
+                <li>🌿 大麻 (Weed): ~37.5% / 堆</li>
                 <li>💵 現金 (Cash): 25% / 堆</li>
               </ul>
             </div>

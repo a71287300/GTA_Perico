@@ -63,20 +63,22 @@ export const TeamRecommendation: React.FC<TeamRecommendationProps> = ({ results 
                             </ScrollArea>
 
                             {/* Leftovers Warning */}
-                            {(result.leftovers.gold > 0.01 || result.leftovers.painting > 0 || result.leftovers.cash > 0.01) && (
+                            {(result.leftovers.gold > 0.01 || result.leftovers.cocaine > 0.01 || result.leftovers.painting > 0 || result.leftovers.weed > 0.01 || result.leftovers.cash > 0.01) && (
                                 <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/30 text-destructive flex items-start gap-3">
                                     <div className="text-xl">⚠️</div>
                                     <div className="text-sm">
                                         <p className="font-bold text-base mb-1">此方案將放棄以下財物：</p>
                                         <ul className="list-disc pl-4 space-y-1">
                                             {result.leftovers.gold > 0.01 && <li>黃金: {result.leftovers.gold.toFixed(2)} 堆</li>}
+                                            {result.leftovers.cocaine > 0.01 && <li>古柯鹼: {result.leftovers.cocaine.toFixed(2)} 堆</li>}
                                             {result.leftovers.painting > 0 && <li>畫作: {result.leftovers.painting} 幅</li>}
+                                            {result.leftovers.weed > 0.01 && <li>大麻: {result.leftovers.weed.toFixed(2)} 堆</li>}
                                             {result.leftovers.cash > 0.01 && <li>現金: {result.leftovers.cash.toFixed(2)} 堆</li>}
                                         </ul>
                                     </div>
                                 </div>
                             )}
-                            {(result.leftovers.gold <= 0.01 && result.leftovers.painting <= 0 && result.leftovers.cash <= 0.01) && (
+                            {(result.leftovers.gold <= 0.01 && result.leftovers.cocaine <= 0.01 && result.leftovers.painting <= 0 && result.leftovers.weed <= 0.01 && result.leftovers.cash <= 0.01) && (
                                 <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/30 text-green-600 dark:text-green-400 flex items-center gap-3">
                                     <div className="text-xl">✅</div>
                                     <div className="font-bold">完美搬空！所有財物皆已帶走。</div>
@@ -91,6 +93,17 @@ export const TeamRecommendation: React.FC<TeamRecommendationProps> = ({ results 
 };
 
 const PlayerCard: React.FC<{ player: PlayerLoot }> = ({ player }) => {
+    const getColorClass = (type: string, isText: boolean = false) => {
+        switch (type) {
+            case 'gold': return isText ? 'text-yellow-600 dark:text-yellow-400' : 'bg-yellow-500';
+            case 'cocaine': return isText ? 'text-slate-600 dark:text-slate-300' : 'bg-slate-400';
+            case 'painting': return isText ? 'text-rose-600 dark:text-rose-400' : 'bg-rose-500';
+            case 'weed': return isText ? 'text-emerald-600 dark:text-emerald-400' : 'bg-emerald-500';
+            case 'cash': return isText ? 'text-lime-600 dark:text-lime-400' : 'bg-lime-500';
+            default: return isText ? 'text-gray-600' : 'bg-gray-500';
+        }
+    };
+
     return (
         <div className="bg-secondary/20 rounded-lg p-4 border border-border/50 hover:border-primary/30 transition-colors">
             <div className="flex justify-between items-center mb-3">
@@ -108,10 +121,7 @@ const PlayerCard: React.FC<{ player: PlayerLoot }> = ({ player }) => {
             <div className="space-y-2 mb-4">
                 {player.items.map((item, idx) => (
                     <div key={idx} className="flex justify-between items-center text-sm bg-background/50 p-2 rounded">
-                        <span className={`font-medium ${item.type === 'gold' ? 'text-yellow-600 dark:text-yellow-400' :
-                                item.type === 'painting' ? 'text-rose-600 dark:text-rose-400' :
-                                    'text-green-600 dark:text-green-400'
-                            }`}>
+                        <span className={`font-medium ${getColorClass(item.type, true)}`}>
                             {item.label.split('(')[0]}
                         </span>
                         <span className="text-muted-foreground text-xs">
@@ -125,10 +135,7 @@ const PlayerCard: React.FC<{ player: PlayerLoot }> = ({ player }) => {
                 {player.items.map((item, idx) => (
                     <div
                         key={idx}
-                        className={`h-full transition-all duration-1000 ${item.type === 'gold' ? 'bg-yellow-500' :
-                                item.type === 'painting' ? 'bg-rose-500' :
-                                    'bg-green-500'
-                            }`}
+                        className={`h-full transition-all duration-1000 ${getColorClass(item.type, false)}`}
                         style={{ width: `${item.percentage * 100}%` }}
                         title={item.label}
                     />
