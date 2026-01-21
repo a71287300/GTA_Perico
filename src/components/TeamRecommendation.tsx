@@ -73,8 +73,8 @@ export const TeamRecommendation: React.FC<TeamRecommendationProps> = ({ results 
                                             {result.leftovers.cocaine > 0.01 && <li>古柯鹼: {result.leftovers.cocaine.toFixed(2)} 堆</li>}
                                             {result.leftovers.painting > 0 && <li>畫作: {result.leftovers.painting} 幅</li>}
                                             {result.leftovers.weed > 0.01 && <li>大麻: {result.leftovers.weed.toFixed(2)} 堆</li>}
-                                            {result.leftovers.cash_compound > 0.01 && <li>現金(莊): {result.leftovers.cash_compound.toFixed(2)} 堆</li>}
-                                            {result.leftovers.cash_airstrip > 0.01 && <li>現金(機): {result.leftovers.cash_airstrip.toFixed(2)} 堆</li>}
+                                            {result.leftovers.cash_compound > 0.01 && <li>現金[莊]: {result.leftovers.cash_compound.toFixed(2)} 堆</li>}
+                                            {result.leftovers.cash_airstrip > 0.01 && <li>現金[機]: {result.leftovers.cash_airstrip.toFixed(2)} 堆</li>}
                                         </ul>
                                     </div>
                                 </div>
@@ -122,16 +122,22 @@ const PlayerCard: React.FC<{ player: PlayerLoot }> = ({ player }) => {
             </div>
 
             <div className="space-y-2 mb-4">
-                {player.items.map((item, idx) => (
-                    <div key={idx} className="flex justify-between items-center text-sm bg-background/50 p-2 rounded">
-                        <span className={`font-medium ${getColorClass(item.type, true)}`}>
-                            {item.label.split('(')[0]}
-                        </span>
-                        <span className="text-muted-foreground text-xs">
-                            ({Math.round(item.percentage * 100)}%)
-                        </span>
-                    </div>
-                ))}
+                {player.items.map((item, idx) => {
+                    // Safe split logic: find the last parenthesis for percentage
+                    const lastParenIndex = item.label.lastIndexOf('(');
+                    const labelName = lastParenIndex > 0 ? item.label.substring(0, lastParenIndex) : item.label;
+
+                    return (
+                        <div key={idx} className="flex justify-between items-center text-sm bg-background/50 p-2 rounded">
+                            <span className={`font-medium ${getColorClass(item.type, true)}`}>
+                                {labelName}
+                            </span>
+                            <span className="text-muted-foreground text-xs">
+                                ({Math.round(item.percentage * 100)}%)
+                            </span>
+                        </div>
+                    );
+                })}
             </div>
 
             <div className="h-4 bg-secondary rounded-full overflow-hidden flex shadow-inner">
