@@ -232,8 +232,8 @@ function formatLabel(type: LootType, amount: number, percentage: number): string
         cocaine: '古柯鹼',
         painting: '畫作',
         weed: '大麻',
-        cash_compound: '現金(莊)',
-        cash_airstrip: '現金(機)'
+        cash_compound: '現金[莊]',
+        cash_airstrip: '現金[機]'
     };
 
     const units: Record<LootType, string> = {
