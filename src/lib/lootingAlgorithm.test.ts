@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { calculateGrabsStr, LootType } from './lootingAlgorithm';
+import { calculateGrabsStr } from './lootingAlgorithm';
 
 describe('Loot Grab Calculation', () => {
 

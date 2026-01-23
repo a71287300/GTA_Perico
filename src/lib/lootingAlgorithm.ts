@@ -1,4 +1,4 @@
-import type { LootConfiguration } from './lootingAlgorithm'; // Self-import for types if needed, but usually types are defined here. Actually I should keep the file self-contained.
+
 
 export interface LootConfiguration {
     compound: {
