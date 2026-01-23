@@ -1,3 +1,5 @@
+import type { LootConfiguration } from './lootingAlgorithm'; // Self-import for types if needed, but usually types are defined here. Actually I should keep the file self-contained.
+
 export interface LootConfiguration {
     compound: {
         goldStacks: number;
@@ -246,18 +248,49 @@ function formatLabel(type: LootType, amount: number, percentage: number): string
     };
 
     const amtStr = parseFloat(amount.toFixed(2));
-    let suffix = '';
-
-    // Calculate approximate grabs for partial stacks
-    if (amount < 0.99 && type !== 'painting') {
-        let totalGrabs = 10; // Default for Cash, Weed, Cocaine
-        if (type === 'gold') totalGrabs = 7; // Gold has ~7 steps
-
-        const grabs = Math.round(amount * totalGrabs);
-        if (grabs > 0) {
-            suffix = ` (約 ${grabs} 抓)`;
-        }
-    }
+    let suffix = calculateGrabsStr(type, amount);
 
     return `${names[type]} ${amtStr} ${units[type]}${suffix} (${pct}%)`;
+}
+
+export function calculateGrabsStr(type: LootType, amount: number): string {
+    if (type === 'painting') return '';
+
+    // Precise sequences from Reddit mechanics
+    const sequences: Partial<Record<LootType, number[]>> = {
+        gold: [20, 40, 20, 40, 40, 40, 40], // Sum 240
+        cocaine: [20, 20, 16, 12, 8, 16, 24, 24, 32, 8], // Sum 180
+        weed: [15, 15, 12, 9, 6, 12, 18, 18, 24, 6], // Sum 135
+        cash_compound: [10, 10, 8, 6, 4, 8, 12, 12, 16, 4], // Sum 90
+        cash_airstrip: [10, 10, 8, 6, 4, 8, 12, 12, 16, 4], // Sum 90
+    };
+
+    const seq = sequences[type];
+    if (!seq) return '';
+
+    const integerPart = Math.floor(amount);
+    const fractionalPart = amount - integerPart;
+
+    if (fractionalPart <= 0.05 && integerPart > 0) return ''; // Full stacks don't need grab info
+
+    // Calculate total value of one pile
+    const totalVal = seq.reduce((a, b) => a + b, 0);
+    const targetVal = fractionalPart * totalVal;
+
+    let currentSum = 0;
+    let grabs = 0;
+
+    for (let i = 0; i < seq.length; i++) {
+        currentSum += seq[i];
+        grabs++;
+        if (currentSum >= targetVal - 0.01) break; // Reached target (tolerant)
+    }
+
+    if (grabs === 0) return '';
+
+    if (integerPart > 0) {
+        return ` (${integerPart}堆 + ${grabs}抓)`;
+    } else {
+        return ` (${grabs}抓)`;
+    }
 }
