@@ -246,5 +246,18 @@ function formatLabel(type: LootType, amount: number, percentage: number): string
     };
 
     const amtStr = parseFloat(amount.toFixed(2));
-    return `${names[type]} ${amtStr} ${units[type]} (${pct}%)`;
+    let suffix = '';
+
+    // Calculate approximate grabs for partial stacks
+    if (amount < 0.99 && type !== 'painting') {
+        let totalGrabs = 10; // Default for Cash, Weed, Cocaine
+        if (type === 'gold') totalGrabs = 7; // Gold has ~7 steps
+
+        const grabs = Math.round(amount * totalGrabs);
+        if (grabs > 0) {
+            suffix = ` (約 ${grabs} 抓)`;
+        }
+    }
+
+    return `${names[type]} ${amtStr} ${units[type]}${suffix} (${pct}%)`;
 }

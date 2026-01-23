@@ -107,9 +107,37 @@ const PlayerCard: React.FC<{ player: PlayerLoot }> = ({ player }) => {
         }
     };
 
+    const airstripItems = player.items.filter(item =>
+        ['cocaine', 'weed', 'cash_airstrip'].includes(item.type)
+    );
+
+    const compoundItems = player.items.filter(item =>
+        ['gold', 'painting', 'cash_compound'].includes(item.type)
+    );
+
+    const renderItems = (items: typeof player.items) => (
+        <div className="space-y-2">
+            {items.map((item, idx) => {
+                const lastParenIndex = item.label.lastIndexOf('(');
+                const labelName = lastParenIndex > 0 ? item.label.substring(0, lastParenIndex) : item.label;
+
+                return (
+                    <div key={idx} className="flex justify-between items-center text-sm bg-background/50 p-2 rounded">
+                        <span className={`font-medium ${getColorClass(item.type, true)}`}>
+                            {labelName}
+                        </span>
+                        <span className="text-muted-foreground text-xs">
+                            ({Math.round(item.percentage * 100)}%)
+                        </span>
+                    </div>
+                );
+            })}
+        </div>
+    );
+
     return (
         <div className="bg-secondary/20 rounded-lg p-4 border border-border/50 hover:border-primary/30 transition-colors">
-            <div className="flex justify-between items-center mb-3">
+            <div className="flex justify-between items-center mb-4">
                 <div className="flex items-center gap-2">
                     <div className="bg-primary text-primary-foreground w-8 h-8 rounded-full flex items-center justify-center font-bold">
                         {player.id}
@@ -121,23 +149,30 @@ const PlayerCard: React.FC<{ player: PlayerLoot }> = ({ player }) => {
                 </Badge>
             </div>
 
-            <div className="space-y-2 mb-4">
-                {player.items.map((item, idx) => {
-                    // Safe split logic: find the last parenthesis for percentage
-                    const lastParenIndex = item.label.lastIndexOf('(');
-                    const labelName = lastParenIndex > 0 ? item.label.substring(0, lastParenIndex) : item.label;
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                {/* Step 1: Airstrip */}
+                <div className="bg-slate-100 dark:bg-slate-900/50 p-3 rounded-md border border-slate-200 dark:border-slate-800">
+                    <h4 className="flex items-center gap-2 font-bold text-slate-700 dark:text-slate-300 mb-2 pb-1 border-b border-slate-200 dark:border-slate-800">
+                        <span>✈️</span> 機場 (Airstrip)
+                    </h4>
+                    {airstripItems.length > 0 ? (
+                        renderItems(airstripItems)
+                    ) : (
+                        <p className="text-xs text-muted-foreground italic pl-1">此區域無任務 (Skip)</p>
+                    )}
+                </div>
 
-                    return (
-                        <div key={idx} className="flex justify-between items-center text-sm bg-background/50 p-2 rounded">
-                            <span className={`font-medium ${getColorClass(item.type, true)}`}>
-                                {labelName}
-                            </span>
-                            <span className="text-muted-foreground text-xs">
-                                ({Math.round(item.percentage * 100)}%)
-                            </span>
-                        </div>
-                    );
-                })}
+                {/* Step 2: Compound */}
+                <div className="bg-amber-50 dark:bg-amber-950/30 p-3 rounded-md border border-amber-200 dark:border-amber-900/50">
+                    <h4 className="flex items-center gap-2 font-bold text-amber-700 dark:text-amber-400 mb-2 pb-1 border-b border-amber-200 dark:border-amber-900/50">
+                        <span>🏰</span> 莊園 (Compound)
+                    </h4>
+                    {compoundItems.length > 0 ? (
+                        renderItems(compoundItems)
+                    ) : (
+                        <p className="text-xs text-muted-foreground italic pl-1">此區域無任務 (Skip)</p>
+                    )}
+                </div>
             </div>
 
             <div className="h-4 bg-secondary rounded-full overflow-hidden flex shadow-inner">
