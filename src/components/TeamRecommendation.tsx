@@ -47,6 +47,12 @@ export const TeamRecommendation: React.FC<TeamRecommendationProps> = ({ results 
                                     <p className="text-xs text-muted-foreground">
                                         {idx === 0 ? "★ 推薦選擇 (最高效益)" : "備用選擇 (攜帶最大化)"}
                                     </p>
+                                    {result.totalValue > 0 && (
+                                        <p className="text-sm text-emerald-600 dark:text-emerald-400 font-bold mt-1 flex items-center gap-1">
+                                            <span>💰</span>
+                                            <span>預估總值: ${result.totalValue.toLocaleString()}</span>
+                                        </p>
+                                    )}
                                 </div>
                                 <div className="text-center">
                                     <span className="block text-xs uppercase tracking-wider text-muted-foreground">人數</span>

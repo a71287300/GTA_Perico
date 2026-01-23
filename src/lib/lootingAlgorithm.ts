@@ -1,5 +1,4 @@
 
-
 export interface LootConfiguration {
     compound: {
         goldStacks: number;
@@ -31,6 +30,7 @@ export interface PlayerLoot {
 export interface LootResult {
     strategyName: string;
     recommendedPlayers: number;
+    totalValue: number; // Added totalValue field
     players: PlayerLoot[];
     leftovers: Record<LootType, number>;
 }
@@ -46,6 +46,16 @@ const WEIGHTS: Record<LootType, number> = {
     weed: 1.0 / 2.6666,
     cash_compound: 0.25,
     cash_airstrip: 0.25,
+};
+
+// Loot Values (Average for Normal Mode)
+const LOOT_VALUES: Record<LootType, number> = {
+    gold: 332184,
+    cocaine: 220095,
+    painting: 189500,
+    weed: 147870,
+    cash_compound: 90000,
+    cash_airstrip: 90000
 };
 
 // Priority: High Value -> Low Value
@@ -154,6 +164,7 @@ function generateStrategyResult(initialPool: Record<LootType, number>, playerCou
     pool.painting = 0;
 
     const players: PlayerLoot[] = [];
+    let totalValue = 0; // Initialize total value
 
     for (let i = 1; i <= playerCount; i++) {
         const player: PlayerLoot = {
@@ -174,6 +185,7 @@ function generateStrategyResult(initialPool: Record<LootType, number>, playerCou
                         percentage: WEIGHTS.painting,
                         label: `畫作 1 幅`
                     });
+                    totalValue += LOOT_VALUES.painting; // Add Painting Value
                     currentPaintings--;
                     space -= WEIGHTS.painting;
                 }
@@ -191,6 +203,8 @@ function generateStrategyResult(initialPool: Record<LootType, number>, playerCou
                     label: formatLabel(type, amount, takeVol)
                 });
 
+                totalValue += amount * LOOT_VALUES[type]; // Add Item Value (Amount * Unit Price)
+
                 pool[type] -= takeVol;
                 space -= takeVol;
             }
@@ -206,14 +220,10 @@ function generateStrategyResult(initialPool: Record<LootType, number>, playerCou
         players.push(player);
     }
 
-    // Recalculate leftovers based on remaining pool
-    // Note: pool was decremented during the loop
-    // But we need to use the original volume logic or what's left in 'pool'
-    // 'pool' variable holds the remaining volume because we subtracted 'takeVol'
-
     return {
         strategyName: name,
         recommendedPlayers: players.length,
+        totalValue: Math.round(totalValue), // Round value
         players,
         leftovers: {
             gold: pool.gold / WEIGHTS.gold,
