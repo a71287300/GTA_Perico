@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { calculateGrabsStr } from './lootingAlgorithm';
+import { calculateGrabsStr, calculateLootDistribution } from './lootingAlgorithm';
 
 describe('Loot Grab Calculation', () => {
 
@@ -76,5 +76,51 @@ describe('Loot Grab Calculation', () => {
         expect(label).toContain('1堆');
         expect(label).toContain('4抓');
         checkGrabs(label, 4);
+    });
+});
+
+describe('Airstrip Optimization Scenario', () => {
+    it('should prioritize Weed over Painting if it cleans up stacks', () => {
+        // User scenario:
+        // Airstrip: 2 Weed, 2 Cash (Total Airstrip)
+        // Compound: 3 Gold, 1 Painting, 3 Cash
+
+        const config = {
+            compound: {
+                goldStacks: 3,
+                paintings: 1,
+                cashStacks: 3
+            },
+            airstrip: {
+                cocaine: 0,
+                weed: 2,
+                cashStacks: 2
+            }
+        };
+
+        const results = calculateLootDistribution(config);
+        const strategy = results.find(r => r.strategyName.includes('Efficiency')) || results[0];
+
+        // Strategy expects 4 players
+        // M1, M2 take 1.5 Gold each (Standard)
+        // Optimization: M3 should take 2 Weed (0.75) + 1 Cash (0.25) -> Full Airstrip Load
+        // M4: 1 Painting (0.5) + 2 Cash (0.5)
+
+        // Current Bad Behavior: 
+        // M3: 1 Painting (0.5) + Weeds (0.5) -> Split weed stack (1.33)
+        // M4: Remaining Weed (0.67) + Cash
+
+        // We want to avoid splitting weed if possible.
+        // Check if anyone has ~2.0 Weed
+
+        const weedCarrier = strategy.players.find(p => p.items.some(i => i.type === 'weed' && i.amount > 1.9));
+
+        // Debug output
+        strategy.players.forEach(p => {
+            const weed = p.items.find(i => i.type === 'weed');
+            if (weed) console.log(`Player ${p.id} carries ${weed.amount} Weed`);
+        });
+
+        expect(weedCarrier, 'Should have one player carrying all 2 stacks of weed').toBeDefined();
     });
 });

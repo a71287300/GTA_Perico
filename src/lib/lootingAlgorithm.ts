@@ -59,7 +59,7 @@ const LOOT_VALUES: Record<LootType, number> = {
 };
 
 // Priority: High Value -> Low Value
-const PRIORITY: LootType[] = ['gold', 'cocaine', 'painting', 'weed', 'cash_compound', 'cash_airstrip'];
+const PRIORITY: LootType[] = ['gold', 'cocaine', 'weed', 'painting', 'cash_compound', 'cash_airstrip'];
 
 export function calculateLootDistribution(config: LootConfiguration): LootResult[] {
     // 1. Calculate Total Volume
